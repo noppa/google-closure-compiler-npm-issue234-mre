@@ -21,14 +21,13 @@ mirror_date="2022-03-01"
 end="2022-04-16"
 
 while ! [[ "$mirror_date" > "$end" ]]; do
+	# Prepare mirrorlist file that installs packages for a specific date from Arch Linux Archive
 	echo "Server=https://archive.archlinux.org/repos/$(echo "$mirror_date" | sed 's/-/\//g')/\$repo/os/\$arch" \
 		> mirrorlist
 	git add .
 	git commit -qm "$mirror_date"
 	mirror_date=$(date -d "$mirror_date + 1 day" +%F)
 done
-
-git bisect start
 
 cat <<"EOT" > run.sh
 #!/bin/bash
@@ -49,6 +48,7 @@ chmod +x run.sh
 
 git bisect start
 git bisect bad HEAD
+# We know (have tested) that the first init commit is ok
 git bisect good $(git rev-list --max-parents=0 HEAD)
 git bisect run ./run.sh
 echo "First broken date:"
