@@ -1,6 +1,6 @@
 # MRE for Google Closure Compiler issue 234
 
-This repository cotnains two Dockerfiles which are nearly identical.
+This repository contains two Dockerfiles which are nearly identical.
 They both install Node v16 and [google-closure-compiler](https://github.com/google/closure-compiler-npm). The difference is that
 one of them uses Ubuntu as its base image, the other uses Arch Linux.
 
