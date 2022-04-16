@@ -3,7 +3,7 @@
 variant="$1"
 
 if ! [ "$variant" = "ubuntu" ] && ! [ "$variant" = "arch" ]; then
-  echo "Usage: $0 [ubuntu|arch]"
+	echo "Usage: $0 [ubuntu|arch]"
 	exit 1
 fi
 
