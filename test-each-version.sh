@@ -38,7 +38,7 @@ cp ./mirrorlist /etc/pacman.d/mirrorlist
 pacman -Suuyy --noconfirm
 npx google-closure-compiler index.js
 if [ $? -eq 0 ]; then
-  echo "$the_date looks fine"
+	echo "$the_date looks fine"
 	exit 0
 else
 	echo "$the_date is broken"
