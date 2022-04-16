@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if ! [ -f /.dockerenv ]; then
-  echo "Run this script inside docker container"
+	echo "Run this script inside docker container"
 	exit 1
 fi
 
@@ -21,7 +21,7 @@ mirror_date="2022-03-01"
 end="2022-04-16"
 
 while ! [[ "$mirror_date" > "$end" ]]; do
-  echo "Server=https://archive.archlinux.org/repos/$(echo "$mirror_date" | sed 's/-/\//g')/\$repo/os/\$arch" \
+	echo "Server=https://archive.archlinux.org/repos/$(echo "$mirror_date" | sed 's/-/\//g')/\$repo/os/\$arch" \
 		> mirrorlist
 	git add .
 	git commit -qm "$mirror_date"
