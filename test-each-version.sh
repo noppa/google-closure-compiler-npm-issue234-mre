@@ -9,22 +9,47 @@ rm -rf .git
 git config --global init.defaultBranch main
 git config --global user.name "Foo Bar"
 git config --global user.email "foo.bar@example.com"
-git init
+git init -q
+
 echo "node_modules" > .gitignore
+echo "run.sh" >> .gitignore
 
-versions=$(npm show google-closure-compiler versions | grep -oE "(2022[0-9.]+-nightly)")
+git add .
+git commit -qm "Init"
 
-for v in $versions
-do
-	jq ".dependencies.\"google-closure-compiler\" = \"$v\""
+mirror_date="2022-03-01"
+end="2022-04-16"
+
+while ! [[ "$mirror_date" > "$end" ]]; do
+  echo "Server=https://archive.archlinux.org/repos/$(echo "$mirror_date" | sed 's/-/\//g')/\$repo/os/\$arch" \
+		> mirrorlist
 	git add .
-	git commit -m "$v"
+	git commit -qm "$mirror_date"
+	mirror_date=$(date -d "$mirror_date + 1 day" +%F)
 done
 
 git bisect start
 
-echo "npm install --no-audit --no-lockfile -yq" > run.sh
-echo "npm run build" >> run.sh
+cat <<"EOT" > run.sh
+#!/bin/bash
+
+the_date=$(git --no-pager show -s --format=%s)
+cp ./mirrorlist /etc/pacman.d/mirrorlist
+pacman -Suuyy --noconfirm
+npx google-closure-compiler index.js
+if [ $? -eq 0 ]; then
+  echo "$the_date looks fine"
+	exit 0
+else
+	echo "$the_date is broken"
+	exit 1
+fi
+EOT
 chmod +x run.sh
 
+git bisect start
+git bisect bad HEAD
+git bisect good $(git rev-list --max-parents=0 HEAD)
 git bisect run ./run.sh
+echo "First broken date:"
+git --no-pager show -s --format=%s

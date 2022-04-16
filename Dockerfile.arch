@@ -6,6 +6,7 @@ COPY ./index.js /test/index.js
 
 RUN pacman -Syu --noconfirm
 RUN pacman -Sy --noconfirm curl
+RUN pacman -Sy --noconfirm git
 
 ENV NVM_DIR /root/.nvm
 ENV NODE_VERSION 16.14.2
