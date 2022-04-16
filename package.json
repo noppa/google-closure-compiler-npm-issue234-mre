@@ -1,0 +1,15 @@
+{
+  "name": "google-closure-issue-234-mre",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "google-closure-compiler index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "google-closure-compiler": "20220405.0.0"
+  }
+}

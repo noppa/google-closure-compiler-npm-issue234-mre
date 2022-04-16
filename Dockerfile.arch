@@ -1,0 +1,30 @@
+FROM archlinux:base-20220410.0.52530
+
+WORKDIR /test
+COPY ./package.json /test/package.json
+COPY ./index.js /test/index.js
+
+RUN pacman -Syu --noconfirm
+RUN pacman -Sy --noconfirm curl
+
+ENV NVM_DIR /root/.nvm
+ENV NODE_VERSION 16.14.2
+
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash \
+	&& . $NVM_DIR/nvm.sh \
+	&& nvm install $NODE_VERSION \
+	&& nvm alias default $NODE_VERSION \
+	&& nvm use default
+
+ENV NODE_PATH $NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+RUN ln -sf $NVM_DIR/versions/node/v$NODE_VERSION/bin/npm /usr/bin/npm
+
+RUN node -v
+RUN npm -v
+
+RUN npm config set update-notifier false
+RUN npm install --no-lockfile
+
+CMD npm run build
+
